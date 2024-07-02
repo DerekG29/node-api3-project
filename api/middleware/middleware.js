@@ -8,11 +8,7 @@ function logger(req, res, next) {
 }
 
 function validateUserId(req, res, next) {
-  const id = req.params.id;
-  if (typeof parseInt(id) !== 'number') {
-    res.status(422).json({ message: 'ID must be an integer' });
-  }
-  Users.getById(id)
+  Users.getById(req.params.id)
     .then(user => {
       if (!user) {
         res.status(404).json({ message: 'user not found' });
