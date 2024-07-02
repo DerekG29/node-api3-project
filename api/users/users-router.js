@@ -5,6 +5,7 @@ const Posts = require('../posts/posts-model');
 const {
   validateUserId,
   validateUser,
+  validatePost,
 } = require('../middleware/middleware');
 
 // You will need `users-model.js` and `posts-model.js` both
@@ -69,10 +70,17 @@ router.get('/:id/posts', validateUserId, (req, res, next) => {
     .catch(next);
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', [validateUserId, validatePost], (req, res, next) => {
   // RETURN THE NEWLY CREATED USER POST
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
+  const { text } = req.body;
+  const user_id = parseInt(req.params.id);
+  Posts.insert({ text, user_id })
+    .then(post => {
+      res.status(201).json(post);
+    })
+    .catch(next);
 });
 
 // do not forget to export the router
